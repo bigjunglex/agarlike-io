@@ -1,0 +1,13 @@
+{
+    "protobuf.protoc.path": "protoc",
+    "protobuf.includes": [
+        "${workspaceFolder}/common"
+    ],
+
+    "protobuf.protoc.compileOnSave": true,
+
+    "protobuf.protoc.options": [
+        "--proto_path=${workspaceFolder}",
+        "--go_out=${workspaceFolder}/server/",
+    ],
+}
