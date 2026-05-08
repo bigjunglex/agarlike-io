@@ -1,27 +1,23 @@
 extends Node
 
-const packets := preload("res://packets.gd")
+var packets := preload("res://packets.gd")
 
 func _ready() -> void:
+	WS.connected_to_server.connect(_on_ws_connected_to_server)
+	WS.connection_closed.connect(_on_ws_connection_closed)
+	WS.packet_received.connect(_on_ws_message)
+	
+	
+func  _on_ws_connected_to_server() -> void:
 	var packet := packets.Packet.new()
-	packet.set_sender_id(777)
-	var chat_msg := packet.new_chat()
-	print(" --- *** ---- ")
-	print("\n")
+	var msg := packet.new_chat()
+	msg.set_msg("Hello from godot!")
+	var err := WS.send(packet)
+	if err:
+		print("[ERROR]: sendig %s", packet)
+
+func _on_ws_connection_closed() -> void:
+	print("Disconnected from the server")
+
+func _on_ws_message() -> void:
 	
-	chat_msg.set_msg("Client Init")
-	print(" --- Packet Created ---- ")
-	print(packet)
-	
-	var data = packet.to_bytes()
-	print(" --- Bytes Send ---- \n")
-	print(data)
-	print("\n")
-	
-	
-	var recieved := packets.Packet.new()
-	recieved.from_bytes(data)
-	print(" --- Bytes Read ---- \n")
-	print(recieved)
-	print("\n")
-	print(" --- *** ---- ")

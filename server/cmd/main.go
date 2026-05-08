@@ -1,30 +1,33 @@
 package main
 
 import (
+	"agar-server/internal/server"
+	"agar-server/internal/server/clients"
+	"flag"
 	"fmt"
-	"agar-server/pkg/packets"
-	"google.golang.org/protobuf/proto"
+	"log"
+	"net/http"
+)
+
+var (
+	port = flag.Int("port", 8075, "Port to listen on")
 )
 
 func main() {
-	fmt.Println("Server running ....")
+	flag.Parse()
 
-	packet := &packets.Packet{
-		SenderId: 67,
-		Msg: packets.NewChat("-- Init Packet --"),
-	}
+	hub := server.NewHub();
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		hub.Serve(clients.NewWebSocketClient, w, r)
+	})
 
-	fmt.Println("----------")
-	fmt.Println("Created packet:")
-	fmt.Println(packet)
+	go hub.Run()
+	addr := fmt.Sprint(":", *port)
+	
+	log.Printf("Starting server on %s port", addr)
+	err := http.ListenAndServe(addr, nil)
 
-	data, err := proto.Marshal(packet)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to start server %v", err)
 	}
-
-	fmt.Println(" ")
-	fmt.Println("Serialized into:")
-	fmt.Println(data)
-	fmt.Println("----------")
 }
