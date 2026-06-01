@@ -31,3 +31,12 @@ func main() {
 		log.Fatalf("Failed to start server %v", err)
 	}
 }
+
+
+/* 
+ ----- AFTER FINISH -----
+ 1. Upload skin
+ 2. Event system
+ 3. AOI
+ ----- AFTER FINISH -----
+*/

@@ -2,6 +2,7 @@ package server
 
 import (
 	"agar-server/pkg/packets"
+	"agar-server/internal/server/objects"
 	"log"
 	"net/http"
 )
@@ -31,7 +32,7 @@ type ClientInterfacer interface {
 }
 
 type Hub struct {
-	Clients        map[uint64]ClientInterfacer
+	Clients        *objects.SharedCollection[ClientInterfacer]
 	BroadcastChan  chan *packets.Packet
 	RegisterChan   chan ClientInterfacer
 	UnregisterChan chan ClientInterfacer
@@ -39,7 +40,7 @@ type Hub struct {
 
 func NewHub() *Hub {
 	return &Hub{
-		Clients:        make(map[uint64]ClientInterfacer),
+		Clients:        objects.NewSharedCollection[ClientInterfacer](),
 		BroadcastChan:  make(chan *packets.Packet),
 		RegisterChan:   make(chan ClientInterfacer),
 		UnregisterChan: make(chan ClientInterfacer),
@@ -52,15 +53,15 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.RegisterChan:
-			client.Initialize(uint64(len(h.Clients)))
+			client.Initialize(h.Clients.Add(client))
 		case client := <-h.UnregisterChan:
-			h.Clients[client.Id()] = nil
+			h.Clients.Remove(client.Id())
 		case packet := <-h.BroadcastChan:
-			for id, client := range h.Clients {
+			h.Clients.ForEach(func(id uint64, client ClientInterfacer){
 				if id != packet.SenderId {
 					client.ProcessMessage(packet.SenderId, packet.Msg)
 				}
-			}
+			})
 		}
 	}
 }
