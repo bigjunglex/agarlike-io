@@ -7,9 +7,23 @@ import (
 	"net/http"
 )
 
+type ClientStateHandler interface {
+	Name() string
+	
+	OnEnter()
+	
+	SetClient(client ClientInterfacer)
+	HandleMessage(senderId uint64, msg packets.Msg)
+	
+	OnExit()
+}
+
 type ClientInterfacer interface {
 	Initialize(id uint64)
 	Id() uint64
+
+	SetState(newState ClientStateHandler)
+
 	ProcessMessage(sender_id uint64, msg packets.Msg)
 
 	//message from this client to write pump

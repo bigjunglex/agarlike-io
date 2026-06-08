@@ -20,3 +20,10 @@ offset_right = 1044.0
 offset_bottom = 599.0
 script = ExtResource("2_0xm2m")
 metadata/_custom_type_script = "uid://j22s314pk4mi"
+
+[node name="LineEdit" type="LineEdit" parent="." unique_id=2048121055]
+layout_mode = 0
+offset_left = -42.0
+offset_top = -26.0
+offset_right = 1075.0
+offset_bottom = 29.0

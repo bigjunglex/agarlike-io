@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+	
 	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
 )
@@ -51,13 +51,18 @@ func (c *WebSocketClient) Id() uint64 {
 }
 
 func (c *WebSocketClient) ProcessMessage(sender_id uint64, msg packets.Msg) {
-	c.logger.Printf("Recieved: %T, echo on", msg)
-	c.SocketSend(msg)	
+	if sender_id == c.id {
+		c.Broadcast(msg)
+	} else {
+		c.SocketSendAs(msg, sender_id)
+	}
 }
 
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
 	c.logger.SetPrefix(fmt.Sprintf("[Client] %d ", c.id))
+	c.SocketSend(packets.NewId(c.id))
+	c.logger.Printf("[ID]: %d assigned + send", c.id)
 }
 
 func (c *WebSocketClient) SocketSend(message packets.Msg) {
