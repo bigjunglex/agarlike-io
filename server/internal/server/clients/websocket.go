@@ -2,11 +2,12 @@ package clients
 
 import (
 	"agar-server/internal/server"
+	"agar-server/internal/server/states"
 	"agar-server/pkg/packets"
 	"fmt"
 	"log"
 	"net/http"
-	
+
 	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
 )
@@ -16,6 +17,7 @@ type WebSocketClient struct {
 	conn     *websocket.Conn
 	hub      *server.Hub
 	sendChan chan *packets.Packet
+	state    server.ClientStateHandler
 	logger   *log.Logger
 }
 
@@ -50,19 +52,33 @@ func (c *WebSocketClient) Id() uint64 {
 	return c.id
 }
 
-func (c *WebSocketClient) ProcessMessage(sender_id uint64, msg packets.Msg) {
-	if sender_id == c.id {
-		c.Broadcast(msg)
-	} else {
-		c.SocketSendAs(msg, sender_id)
+func (c *WebSocketClient) SetState(state server.ClientStateHandler) {
+	prevStateName := "none"
+	if c.state != nil {
+		prevStateName = c.state.Name()
+		c.state.OnExit()
 	}
+
+	newStateName := "none"
+
+	if state != nil {
+		newStateName = state.Name()
+		c.state = state
+		c.state.SetClient(c)
+		c.state.OnEnter()
+	}
+
+	c.logger.Printf("[STATE] %s -> %s", prevStateName, newStateName)
+}
+
+func (c *WebSocketClient) ProcessMessage(sender_id uint64, msg packets.Msg) {
+	c.state.HandleMessage(sender_id, msg)
 }
 
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
 	c.logger.SetPrefix(fmt.Sprintf("[Client] %d ", c.id))
-	c.SocketSend(packets.NewId(c.id))
-	c.logger.Printf("[ID]: %d assigned + send", c.id)
+	c.SetState(&states.Connected{})
 }
 
 func (c *WebSocketClient) SocketSend(message packets.Msg) {
@@ -153,6 +169,9 @@ func (c *WebSocketClient) WritePump() {
 
 func (c *WebSocketClient) Close(reason string) {
 	c.logger.Printf("Closing client connection, [reason]: %s", reason)
+
+	c.SetState(nil)
+
 	c.hub.UnregisterChan <- c
 	c.conn.Close()
 

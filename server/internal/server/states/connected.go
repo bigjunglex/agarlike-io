@@ -12,15 +12,6 @@ type Connected struct {
 	logger *log.Logger
 }
 
-// Name() string
-//
-// OnEnter()
-//
-// SetClient(client ClientInterfacer)
-// HandleMessage(senderId uint64, msg packets.Msg)
-//
-// OnExit()
-
 func (c *Connected) Name() string {
 	return "Connected"
 }
@@ -34,6 +25,12 @@ func (c *Connected) OnEnter() {
 	c.client.SocketSend(packets.NewId(c.client.Id()))
 }
 
-func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {}
+func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {
+	if senderId == c.client.Id() {
+		c.client.Broadcast(msg)
+	} else {
+		c.client.SocketSendAs(msg, senderId)
+	}
+}
 
 func (c *Connected) OnExit() {}
