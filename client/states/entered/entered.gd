@@ -30,5 +30,5 @@ func _handle_id_packet(sender_id: int, id_assign: packets.IdAssign) -> void:
 		_log.error("[SERVER]: undefined msg")
 
 	GameManager.client_id = id_assign.get_id()
-	GameManager.set_state(GameManager.State.INGAME)
+	GameManager.set_state(GameManager.State.CONNECTED)
 	_log.success("[ID] assigned: %d" % GameManager.client_id)

@@ -1,11 +1,24 @@
 package server
 
 import (
-	"agar-server/pkg/packets"
+	"agar-server/internal/server/db"
 	"agar-server/internal/server/objects"
+	"agar-server/pkg/packets"
+	"context"
+	"database/sql"
+	_ "embed"
+	_ "modernc.org/sqlite"
 	"log"
 	"net/http"
 )
+
+//go:embed db/config/schema.sql
+var schemaGenSql string
+
+type DbTx struct {
+	Ctx context.Context
+	Queries *db.Queries
+}
 
 type ClientStateHandler interface {
 	Name() string
@@ -42,6 +55,8 @@ type ClientInterfacer interface {
 	// data from client to socket
 	WritePump()
 
+	DbTx() *DbTx
+
 	Close(reason string)
 }
 
@@ -50,18 +65,39 @@ type Hub struct {
 	BroadcastChan  chan *packets.Packet
 	RegisterChan   chan ClientInterfacer
 	UnregisterChan chan ClientInterfacer
+	dbPool *sql.DB
+}
+
+
+func (h *Hub) NewDbTx() *DbTx {
+	return  & DbTx{
+		Ctx: context.Background(),
+		Queries: db.New(h.dbPool),
+	}
 }
 
 func NewHub() *Hub {
+	dbPool, err := sql.Open("sqlite", "db.sqlite")
+	if err != nil {
+		log.Fatalf("Error opening database %v", err)
+	}
 	return &Hub{
 		Clients:        objects.NewSharedCollection[ClientInterfacer](),
 		BroadcastChan:  make(chan *packets.Packet),
 		RegisterChan:   make(chan ClientInterfacer),
 		UnregisterChan: make(chan ClientInterfacer),
+		dbPool: dbPool,
 	}
 }
 
 func (h *Hub) Run() {
+	log.Println("Initializing database ... ")
+	_, err := h.dbPool.ExecContext(context.Background(), schemaGenSql)
+	
+	if err != nil {
+		log.Fatalf("Error initializing database: %v", err)
+	}
+
 	log.Println("Client registrations ... ")
 
 	for {

@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://dlyhapb1jpg0h"]
+
+[ext_resource type="Script" uid="uid://b42r7vdq852ll" path="res://states/connected/connected.gd" id="1_idi6s"]
+[ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="2_kh2bm"]
+
+[node name="Connected" type="Node" unique_id=167278110]
+script = ExtResource("1_idi6s")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1326835452]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI" unique_id=381893100]
+custom_minimum_size = Vector2(350, 0)
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = 37.0
+offset_right = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Username" type="LineEdit" parent="UI/VBoxContainer" unique_id=283007903]
+layout_mode = 2
+
+[node name="Password" type="LineEdit" parent="UI/VBoxContainer" unique_id=987337070]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer" unique_id=1499565970]
+layout_mode = 2
+
+[node name="LoginButton" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=221105539]
+layout_mode = 2
+text = "Login"
+
+[node name="RegisterButton" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=192254547]
+layout_mode = 2
+text = "Register"
+
+[node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=1848809540]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+script = ExtResource("2_kh2bm")
+metadata/_custom_type_script = "uid://j22s314pk4mi"

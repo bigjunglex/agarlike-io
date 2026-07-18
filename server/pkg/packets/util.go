@@ -11,17 +11,23 @@ func NewChat(msg string) Msg {
 }
 
 func NewId(id uint64) Msg {
-	return  &Packet_Id{
+	return &Packet_Id{
 		Id: &IdAssign{
 			Id: id,
 		},
 	}
 }
 
-func NewDir(direction float32) Msg {
-	return &Packet_Dir{
-		Dir: &DirectionUpdate{
-			Direction: direction,
+func NewOkResponse() Msg {
+	return &Packet_OkResponse{
+		OkResponse: &OkResponseMessage{},
+	}
+}
+
+func NewDenyResponse(reason string) Msg {
+	return &Packet_DenyResponse{
+		DenyResponse: &DenyResponseMessage{
+			Reason: reason,
 		},
 	}
 }
