@@ -42,6 +42,17 @@ func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {
 		c.handleLoginRequest(senderId, msg)
 	case *packets.Packet_RegisterRequest:
 		c.handleRegisterRequest(senderId, msg)
+	case *packets.Packet_Chat:
+		c.handleChatMessage(senderId, msg)
+	}
+}
+
+func (c *Connected) handleChatMessage(senderId uint64, msg *packets.Packet_Chat) {
+	c.logger.Printf("chat message from %d: %v", senderId, msg.Chat.Msg)
+	if senderId == c.client.Id() {
+		c.client.Broadcast(msg)
+	} else {
+		c.client.SocketSendAs(msg, senderId)
 	}
 }
 
