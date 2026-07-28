@@ -7,27 +7,28 @@ import (
 	"context"
 	"database/sql"
 	_ "embed"
-	_ "modernc.org/sqlite"
 	"log"
 	"net/http"
+
+	_ "modernc.org/sqlite"
 )
 
 //go:embed db/config/schema.sql
 var schemaGenSql string
 
 type DbTx struct {
-	Ctx context.Context
+	Ctx     context.Context
 	Queries *db.Queries
 }
 
 type ClientStateHandler interface {
 	Name() string
-	
+
 	OnEnter()
-	
+
 	SetClient(client ClientInterfacer)
 	HandleMessage(senderId uint64, msg packets.Msg)
-	
+
 	OnExit()
 }
 
@@ -57,23 +58,30 @@ type ClientInterfacer interface {
 
 	DbTx() *DbTx
 
+	SharedGameObjects() *SharedGameObjects
+
 	Close(reason string)
 }
 
 type Hub struct {
-	Clients        *objects.SharedCollection[ClientInterfacer]
-	BroadcastChan  chan *packets.Packet
-	RegisterChan   chan ClientInterfacer
-	UnregisterChan chan ClientInterfacer
-	dbPool *sql.DB
+	Clients           *objects.SharedCollection[ClientInterfacer]
+	BroadcastChan     chan *packets.Packet
+	RegisterChan      chan ClientInterfacer
+	UnregisterChan    chan ClientInterfacer
+	dbPool            *sql.DB
+	SharedGameObjects *SharedGameObjects
 }
 
-
 func (h *Hub) NewDbTx() *DbTx {
-	return  & DbTx{
-		Ctx: context.Background(),
+	return &DbTx{
+		Ctx:     context.Background(),
 		Queries: db.New(h.dbPool),
 	}
+}
+
+type SharedGameObjects struct {
+	//client id = player id
+	Players *objects.SharedCollection[*objects.Player]
 }
 
 func NewHub() *Hub {
@@ -86,14 +94,17 @@ func NewHub() *Hub {
 		BroadcastChan:  make(chan *packets.Packet),
 		RegisterChan:   make(chan ClientInterfacer),
 		UnregisterChan: make(chan ClientInterfacer),
-		dbPool: dbPool,
+		dbPool:         dbPool,
+		SharedGameObjects: &SharedGameObjects{
+			Players: objects.NewSharedCollection[*objects.Player](),
+		},
 	}
 }
 
 func (h *Hub) Run() {
 	log.Println("Initializing database ... ")
 	_, err := h.dbPool.ExecContext(context.Background(), schemaGenSql)
-	
+
 	if err != nil {
 		log.Fatalf("Error initializing database: %v", err)
 	}
@@ -107,7 +118,7 @@ func (h *Hub) Run() {
 		case client := <-h.UnregisterChan:
 			h.Clients.Remove(client.Id())
 		case packet := <-h.BroadcastChan:
-			h.Clients.ForEach(func(id uint64, client ClientInterfacer){
+			h.Clients.ForEach(func(id uint64, client ClientInterfacer) {
 				if id != packet.SenderId {
 					client.ProcessMessage(packet.SenderId, packet.Msg)
 				}

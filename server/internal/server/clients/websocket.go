@@ -19,7 +19,7 @@ type WebSocketClient struct {
 	sendChan chan *packets.Packet
 	state    server.ClientStateHandler
 	logger   *log.Logger
-	dbTx 	 *server.DbTx
+	dbTx     *server.DbTx
 }
 
 func NewWebSocketClient(
@@ -44,7 +44,7 @@ func NewWebSocketClient(
 		conn:     conn,
 		sendChan: make(chan *packets.Packet, 256),
 		logger:   log.New(log.Writer(), "Client unknow: ", log.LstdFlags),
-		dbTx: 	  hub.NewDbTx(),
+		dbTx:     hub.NewDbTx(),
 	}
 
 	return c, nil
@@ -171,6 +171,10 @@ func (c *WebSocketClient) WritePump() {
 
 func (c *WebSocketClient) DbTx() *server.DbTx {
 	return c.dbTx
+}
+
+func (c *WebSocketClient) SharedGameObjects() *server.SharedGameObjects {
+	return c.hub.SharedGameObjects
 }
 
 func (c *WebSocketClient) Close(reason string) {

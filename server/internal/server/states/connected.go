@@ -3,6 +3,7 @@ package states
 import (
 	"agar-server/internal/server"
 	"agar-server/internal/server/db"
+	"agar-server/internal/server/objects"
 	"agar-server/pkg/packets"
 	"context"
 	"errors"
@@ -42,19 +43,19 @@ func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {
 		c.handleLoginRequest(senderId, msg)
 	case *packets.Packet_RegisterRequest:
 		c.handleRegisterRequest(senderId, msg)
-	case *packets.Packet_Chat:
-		c.handleChatMessage(senderId, msg)
+	// case *packets.Packet_Chat:
+	// 	c.handleChatMessage(senderId, msg)
 	}
 }
 
-func (c *Connected) handleChatMessage(senderId uint64, msg *packets.Packet_Chat) {
-	c.logger.Printf("chat message from %d: %v", senderId, msg.Chat.Msg)
-	if senderId == c.client.Id() {
-		c.client.Broadcast(msg)
-	} else {
-		c.client.SocketSendAs(msg, senderId)
-	}
-}
+// func (c *Connected) handleChatMessage(senderId uint64, msg *packets.Packet_Chat) {
+// 	c.logger.Printf("chat message from %d: %v", senderId, msg.Chat.Msg)
+// 	if senderId == c.client.Id() {
+// 		c.client.Broadcast(msg)
+// 	} else {
+// 		c.client.SocketSendAs(msg, senderId)
+// 	}
+// }
 
 func (c *Connected) handleLoginRequest(senderId uint64, msg *packets.Packet_LoginRequest) {
 	if senderId != c.client.Id() {
@@ -81,6 +82,12 @@ func (c *Connected) handleLoginRequest(senderId uint64, msg *packets.Packet_Logi
 
 	c.logger.Printf("[LOGIN]: %s logged in", username)
 	c.client.SocketSend(packets.NewOkResponse())
+
+	c.client.SetState(&InGame{
+		player: &objects.Player{
+			Name: username,
+		},
+	})
 }
 
 func (c *Connected) handleRegisterRequest(senderId uint64, msg *packets.Packet_RegisterRequest) {
