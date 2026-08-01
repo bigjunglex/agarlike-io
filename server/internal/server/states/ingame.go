@@ -47,6 +47,16 @@ func (g *InGame) HandleMessage(senderId uint64, msg packets.Msg) {
 		g.handlePlayer(senderId, msg)
 	case *packets.Packet_PlayerDirection:
 		g.handleDirection(senderId, msg)
+	case *packets.Packet_Chat:
+		g.handleChat(senderId, msg)
+	}
+}
+
+func (g *InGame) handleChat(senderId uint64, msg *packets.Packet_Chat) {
+	if senderId == g.client.Id() {
+		g.client.Broadcast(msg)
+	} else {
+		g.client.SocketSendAs(msg, senderId)
 	}
 }
 
