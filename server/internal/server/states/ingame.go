@@ -39,6 +39,14 @@ func (g *InGame) OnEnter() {
 	g.player.Radius = 20.0
 
 	g.client.SocketSend(packets.NewPlayer(g.client.Id(), g.player))
+
+	//cringe
+	go func() {
+		g.client.SharedGameObjects().Spores.ForEach(func(u uint64, s *objects.Spore) {
+			time.Sleep(5 * time.Millisecond)
+			g.client.SocketSend(packets.NewSpore(u, s))
+		})
+	}()
 }
 
 func (g *InGame) HandleMessage(senderId uint64, msg packets.Msg) {

@@ -429,6 +429,74 @@ func (x *PlayerDirectionMessage) GetDirection() float64 {
 	return 0
 }
 
+type SporeMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	X             float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
+	Radius        float64                `protobuf:"fixed64,4,opt,name=radius,proto3" json:"radius,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SporeMessage) Reset() {
+	*x = SporeMessage{}
+	mi := &file_common_packets_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SporeMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SporeMessage) ProtoMessage() {}
+
+func (x *SporeMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_common_packets_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SporeMessage.ProtoReflect.Descriptor instead.
+func (*SporeMessage) Descriptor() ([]byte, []int) {
+	return file_common_packets_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SporeMessage) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SporeMessage) GetX() float64 {
+	if x != nil {
+		return x.X
+	}
+	return 0
+}
+
+func (x *SporeMessage) GetY() float64 {
+	if x != nil {
+		return x.Y
+	}
+	return 0
+}
+
+func (x *SporeMessage) GetRadius() float64 {
+	if x != nil {
+		return x.Radius
+	}
+	return 0
+}
+
 type Packet struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	SenderId uint64                 `protobuf:"varint,1,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
@@ -442,6 +510,7 @@ type Packet struct {
 	//	*Packet_DenyResponse
 	//	*Packet_Player
 	//	*Packet_PlayerDirection
+	//	*Packet_Spore
 	Msg           isPacket_Msg `protobuf_oneof:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -449,7 +518,7 @@ type Packet struct {
 
 func (x *Packet) Reset() {
 	*x = Packet{}
-	mi := &file_common_packets_proto_msgTypes[8]
+	mi := &file_common_packets_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -461,7 +530,7 @@ func (x *Packet) String() string {
 func (*Packet) ProtoMessage() {}
 
 func (x *Packet) ProtoReflect() protoreflect.Message {
-	mi := &file_common_packets_proto_msgTypes[8]
+	mi := &file_common_packets_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -474,7 +543,7 @@ func (x *Packet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Packet.ProtoReflect.Descriptor instead.
 func (*Packet) Descriptor() ([]byte, []int) {
-	return file_common_packets_proto_rawDescGZIP(), []int{8}
+	return file_common_packets_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Packet) GetSenderId() uint64 {
@@ -563,6 +632,15 @@ func (x *Packet) GetPlayerDirection() *PlayerDirectionMessage {
 	return nil
 }
 
+func (x *Packet) GetSpore() *SporeMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_Spore); ok {
+			return x.Spore
+		}
+	}
+	return nil
+}
+
 type isPacket_Msg interface {
 	isPacket_Msg()
 }
@@ -599,6 +677,10 @@ type Packet_PlayerDirection struct {
 	PlayerDirection *PlayerDirectionMessage `protobuf:"bytes,9,opt,name=player_direction,json=playerDirection,proto3,oneof"`
 }
 
+type Packet_Spore struct {
+	Spore *SporeMessage `protobuf:"bytes,10,opt,name=spore,proto3,oneof"`
+}
+
 func (*Packet_Chat) isPacket_Msg() {}
 
 func (*Packet_Id) isPacket_Msg() {}
@@ -614,6 +696,8 @@ func (*Packet_DenyResponse) isPacket_Msg() {}
 func (*Packet_Player) isPacket_Msg() {}
 
 func (*Packet_PlayerDirection) isPacket_Msg() {}
+
+func (*Packet_Spore) isPacket_Msg() {}
 
 var File_common_packets_proto protoreflect.FileDescriptor
 
@@ -642,7 +726,12 @@ const file_common_packets_proto_rawDesc = "" +
 	"\tdirection\x18\x06 \x01(\x01R\tdirection\x12\x14\n" +
 	"\x05speed\x18\a \x01(\x01R\x05speed\"6\n" +
 	"\x16PlayerDirectionMessage\x12\x1c\n" +
-	"\tdirection\x18\x01 \x01(\x01R\tdirection\"\x94\x04\n" +
+	"\tdirection\x18\x01 \x01(\x01R\tdirection\"R\n" +
+	"\fSporeMessage\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\f\n" +
+	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
+	"\x01y\x18\x03 \x01(\x01R\x01y\x12\x16\n" +
+	"\x06radius\x18\x04 \x01(\x01R\x06radius\"\xc3\x04\n" +
 	"\x06Packet\x12\x1b\n" +
 	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12*\n" +
 	"\x04chat\x18\x02 \x01(\v2\x14.packets.ChatMessageH\x00R\x04chat\x12#\n" +
@@ -653,7 +742,9 @@ const file_common_packets_proto_rawDesc = "" +
 	"okResponse\x12C\n" +
 	"\rdeny_response\x18\a \x01(\v2\x1c.packets.DenyResponseMessageH\x00R\fdenyResponse\x120\n" +
 	"\x06player\x18\b \x01(\v2\x16.packets.PlayerMessageH\x00R\x06player\x12L\n" +
-	"\x10player_direction\x18\t \x01(\v2\x1f.packets.PlayerDirectionMessageH\x00R\x0fplayerDirectionB\x05\n" +
+	"\x10player_direction\x18\t \x01(\v2\x1f.packets.PlayerDirectionMessageH\x00R\x0fplayerDirection\x12-\n" +
+	"\x05spore\x18\n" +
+	" \x01(\v2\x15.packets.SporeMessageH\x00R\x05sporeB\x05\n" +
 	"\x03msgB\rZ\vpkg/packetsb\x06proto3"
 
 var (
@@ -668,7 +759,7 @@ func file_common_packets_proto_rawDescGZIP() []byte {
 	return file_common_packets_proto_rawDescData
 }
 
-var file_common_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_common_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_common_packets_proto_goTypes = []any{
 	(*ChatMessage)(nil),            // 0: packets.ChatMessage
 	(*IdAssign)(nil),               // 1: packets.IdAssign
@@ -678,7 +769,8 @@ var file_common_packets_proto_goTypes = []any{
 	(*DenyResponseMessage)(nil),    // 5: packets.DenyResponseMessage
 	(*PlayerMessage)(nil),          // 6: packets.PlayerMessage
 	(*PlayerDirectionMessage)(nil), // 7: packets.PlayerDirectionMessage
-	(*Packet)(nil),                 // 8: packets.Packet
+	(*SporeMessage)(nil),           // 8: packets.SporeMessage
+	(*Packet)(nil),                 // 9: packets.Packet
 }
 var file_common_packets_proto_depIdxs = []int32{
 	0, // 0: packets.Packet.chat:type_name -> packets.ChatMessage
@@ -689,11 +781,12 @@ var file_common_packets_proto_depIdxs = []int32{
 	5, // 5: packets.Packet.deny_response:type_name -> packets.DenyResponseMessage
 	6, // 6: packets.Packet.player:type_name -> packets.PlayerMessage
 	7, // 7: packets.Packet.player_direction:type_name -> packets.PlayerDirectionMessage
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	8, // 8: packets.Packet.spore:type_name -> packets.SporeMessage
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_common_packets_proto_init() }
@@ -701,7 +794,7 @@ func file_common_packets_proto_init() {
 	if File_common_packets_proto != nil {
 		return
 	}
-	file_common_packets_proto_msgTypes[8].OneofWrappers = []any{
+	file_common_packets_proto_msgTypes[9].OneofWrappers = []any{
 		(*Packet_Chat)(nil),
 		(*Packet_Id)(nil),
 		(*Packet_LoginRequest)(nil),
@@ -710,6 +803,7 @@ func file_common_packets_proto_init() {
 		(*Packet_DenyResponse)(nil),
 		(*Packet_Player)(nil),
 		(*Packet_PlayerDirection)(nil),
+		(*Packet_Spore)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -717,7 +811,7 @@ func file_common_packets_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_packets_proto_rawDesc), len(file_common_packets_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

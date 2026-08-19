@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://b4o1hon27yrn4"]
+
+[ext_resource type="Script" uid="uid://b6s2jbqx5rhwo" path="res://objects/spore/spore.gd" id="1_gbvov"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tgmx7"]
+resource_local_to_scene = true
+
+[node name="Spore" type="Area2D" unique_id=628091273]
+script = ExtResource("1_gbvov")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1905808182]
+position = Vector2(22, 20)
+shape = SubResource("CircleShape2D_tgmx7")

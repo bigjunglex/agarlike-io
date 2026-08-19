@@ -2,8 +2,10 @@ extends Node
 
 const packets := preload("res://packets.gd")
 const Actor := preload("res://objects/actor/actor.gd")
+const Spore := preload("res://objects/spore/spore.gd")
 
 var _players: Dictionary[int, Actor]
+var _spores: Dictionary[int, Spore]
 
 @onready var _log: Log = $UI/Log
 @onready var _line_edit: LineEdit = $UI/LineEdit
@@ -24,13 +26,16 @@ func _on_ws_packet_recived(packet: packets.Packet) -> void:
 		_handle_chat_packet(sender_id, packet.get_chat())
 	elif packet.has_player():
 		_handle_player_packet(sender_id, packet.get_player())
+	elif packet.has_spore():
+		_handle_spore_packet(sender_id, packet.get_spore())
 	
 	
 func _handle_chat_packet(sender_id: int, chat: packets.ChatMessage) -> void:
-	_log.chat("[%d]" % sender_id, chat.get_msg())
+	var username := _players[sender_id].actor_name
+	_log.chat("[%s]" % username, chat.get_msg())
 	
 	
-func _handle_player_packet(sender_id: int, player: packets.PlayerMessage) -> void:
+func _handle_player_packet(_sender_id: int, player: packets.PlayerMessage) -> void:
 	var actor_id := player.get_id()
 	var actor_name := player.get_name()
 	var x := player.get_x()
@@ -57,7 +62,19 @@ func _handle_player_packet(sender_id: int, player: packets.PlayerMessage) -> voi
 		var actor := _players[actor_id]
 		actor.position.x = x
 		actor.position.y = y
+		actor.velocity = speed * Vector2.from_angle(direction)
+		
 
+func _handle_spore_packet(sender_id: int, packet: packets.SporeMessage) -> void:
+	var spore_id = packet.get_id()
+	var x = packet.get_x()
+	var y = packet.get_y()
+	var radius = packet.get_radius()
+	
+	if spore_id not in _spores:
+		var spore := Spore.instanciate(spore_id, x, y, radius)
+		_world.add_child(spore)
+		_spores[spore_id] = spore
 
 func _on_line_edit_submit(new_text: String) -> void:
 	var packet := packets.Packet.new()
