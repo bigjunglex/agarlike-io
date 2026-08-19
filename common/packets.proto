@@ -47,6 +47,12 @@ message SporeMessage {
   double radius = 4;
 }
 
+message SporesBatchMessage {
+  repeated SporeMessage spores = 1;
+}
+
+message SporeConsumedMessage { uint64 id = 1;}
+
 message Packet {
   uint64 sender_id = 1;
   oneof msg {
@@ -59,5 +65,7 @@ message Packet {
     PlayerMessage player = 8;
     PlayerDirectionMessage player_direction = 9;
     SporeMessage spore = 10;
+    SporeConsumedMessage spore_consumed = 11;
+    SporesBatchMessage spores_batch = 12;
   }
 }

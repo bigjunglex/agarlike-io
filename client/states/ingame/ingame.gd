@@ -28,6 +28,8 @@ func _on_ws_packet_recived(packet: packets.Packet) -> void:
 		_handle_player_packet(sender_id, packet.get_player())
 	elif packet.has_spore():
 		_handle_spore_packet(sender_id, packet.get_spore())
+	elif packet.has_spores_batch():
+		_handle_spore_batch_packet(sender_id, packet.get_spores_batch())
 	
 	
 func _handle_chat_packet(sender_id: int, chat: packets.ChatMessage) -> void:
@@ -46,7 +48,7 @@ func _handle_player_packet(_sender_id: int, player: packets.PlayerMessage) -> vo
 	var is_player := actor_id == GameManager.client_id
 	
 	if actor_id not in _players:
-		var actor := Actor.instanciate(
+		_add_actor(
 			actor_id,
 			actor_name,
 			x,
@@ -56,16 +58,10 @@ func _handle_player_packet(_sender_id: int, player: packets.PlayerMessage) -> vo
 			speed,
 			is_player
 		)
-		_world.add_child(actor)
-		_players[actor_id] = actor
 	else:
-		var actor := _players[actor_id]
-		actor.position.x = x
-		actor.position.y = y
-		actor.velocity = speed * Vector2.from_angle(direction)
-		
+		_update_actor(actor_id, x, y, radius, direction, speed, is_player)
 
-func _handle_spore_packet(sender_id: int, packet: packets.SporeMessage) -> void:
+func _handle_spore_packet(_sender_id: int, packet: packets.SporeMessage) -> void:
 	var spore_id = packet.get_id()
 	var x = packet.get_x()
 	var y = packet.get_y()
@@ -75,6 +71,11 @@ func _handle_spore_packet(sender_id: int, packet: packets.SporeMessage) -> void:
 		var spore := Spore.instanciate(spore_id, x, y, radius)
 		_world.add_child(spore)
 		_spores[spore_id] = spore
+
+func _handle_spore_batch_packet(sender_id: int, batch: packets.SporesBatchMessage) -> void:
+	for spore_msg in batch.get_spores():
+		_handle_spore_packet(sender_id, spore_msg)
+	
 
 func _on_line_edit_submit(new_text: String) -> void:
 	var packet := packets.Packet.new()
@@ -87,3 +88,63 @@ func _on_line_edit_submit(new_text: String) -> void:
 	else:
 		_log.chat("You", new_text)
 	_line_edit.clear()
+
+
+func _add_actor(
+		actor_id: int,
+		actor_name: String,
+		x: float,
+		y: float,
+		radius: float,
+		direction: float,
+		speed: float,
+		is_player: bool
+	) -> void:
+	var actor := Actor.instanciate(
+		actor_id,
+		actor_name,
+		x,
+		y,
+		radius,
+		direction,
+		speed,
+		is_player
+	)
+	_world.add_child(actor)
+	_players[actor_id] = actor
+	if is_player:
+		actor.area_entered.connect(_on_player_area_entered)
+
+	
+func _update_actor(
+	actor_id: int,
+	x: float,
+	y: float,
+	radius: float,
+	direction: float,
+	speed: float,
+	is_player: bool 
+	) -> void:
+	var actor := _players[actor_id]
+	actor.radius = radius
+	if actor.position.distance_squared_to(Vector2(x, y)) > 100:
+		actor.position.x = x
+		actor.position.y = y
+	
+	if not is_player:
+		actor.velocity = speed * Vector2.from_angle(direction)
+
+func _on_player_area_entered(area: Area2D) -> void:
+	if area is Spore: 
+		_consume_spore(area as Spore)
+		
+func _consume_spore(spore: Spore) -> void:
+	var packet := packets.Packet.new()
+	var spore_consume_message := packet.new_spore_consumed()
+	spore_consume_message.set_id(spore.spore_id)
+	WS.send(packet)
+	_remove_spore(spore)
+	
+func _remove_spore(spore: Spore) -> void:
+	_spores.erase(spore.spore_id)
+	spore.queue_free()

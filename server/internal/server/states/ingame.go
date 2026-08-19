@@ -40,12 +40,23 @@ func (g *InGame) OnEnter() {
 
 	g.client.SocketSend(packets.NewPlayer(g.client.Id(), g.player))
 
-	//cringe
+	//cringe with batches
 	go func() {
-		g.client.SharedGameObjects().Spores.ForEach(func(u uint64, s *objects.Spore) {
-			time.Sleep(5 * time.Millisecond)
-			g.client.SocketSend(packets.NewSpore(u, s))
+		const batchSize = 20
+		sporesBatch := make(map[uint64]*objects.Spore, batchSize)
+
+		g.client.SharedGameObjects().Spores.ForEach(func(spore_id uint64, spore *objects.Spore) {
+			sporesBatch[spore_id] = spore
+			if len(sporesBatch) >= batchSize {
+				g.client.SocketSend(packets.NewSporesBatch(sporesBatch))
+				sporesBatch = make(map[uint64]*objects.Spore, batchSize)
+				time.Sleep(50 * time.Millisecond)
+			}
 		})
+
+		if len(sporesBatch) > 0 {
+			g.client.SocketSend(packets.NewSporesBatch(sporesBatch))
+		}
 	}()
 }
 
@@ -57,6 +68,8 @@ func (g *InGame) HandleMessage(senderId uint64, msg packets.Msg) {
 		g.handleDirection(senderId, msg)
 	case *packets.Packet_Chat:
 		g.handleChat(senderId, msg)
+	case *packets.Packet_SporeConsumed:
+		g.handleSporeConsumed(senderId, msg)
 	}
 }
 
@@ -102,6 +115,10 @@ func (g *InGame) handlePlayer(senderId uint64, msg *packets.Packet_Player) {
 	}
 
 	g.client.SocketSendAs(msg, senderId)
+}
+
+func (g *InGame) handleSporeConsumed(senderId uint64, msg *packets.Packet_SporeConsumed) {
+	g.logger.Printf("Spore %d consumed by player", msg.SporeConsumed.Id)
 }
 
 func (g *InGame) syncPlayer(dt float64) {
