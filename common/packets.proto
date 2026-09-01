@@ -53,6 +53,8 @@ message SporesBatchMessage {
 
 message SporeConsumedMessage { uint64 id = 1;}
 
+message PlayerConsumedMessage { uint64 player_id = 1;}
+
 message Packet {
   uint64 sender_id = 1;
   oneof msg {
@@ -67,5 +69,6 @@ message Packet {
     SporeMessage spore = 10;
     SporeConsumedMessage spore_consumed = 11;
     SporesBatchMessage spores_batch = 12;
+    PlayerConsumedMessage player_consumed = 13;
   }
 }

@@ -18,7 +18,11 @@ var speed: float
 var is_player: bool
 
 var velocity: Vector2
-var radius: float
+var radius: float:
+	set(r):
+		radius = r
+		_collision_shape.shape.radius = radius
+		queue_redraw()
 
 static func instanciate(
 		actor_id: int,

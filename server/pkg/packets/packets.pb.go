@@ -585,6 +585,50 @@ func (x *SporeConsumedMessage) GetId() uint64 {
 	return 0
 }
 
+type PlayerConsumedMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlayerId      uint64                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlayerConsumedMessage) Reset() {
+	*x = PlayerConsumedMessage{}
+	mi := &file_common_packets_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlayerConsumedMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlayerConsumedMessage) ProtoMessage() {}
+
+func (x *PlayerConsumedMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_common_packets_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlayerConsumedMessage.ProtoReflect.Descriptor instead.
+func (*PlayerConsumedMessage) Descriptor() ([]byte, []int) {
+	return file_common_packets_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PlayerConsumedMessage) GetPlayerId() uint64 {
+	if x != nil {
+		return x.PlayerId
+	}
+	return 0
+}
+
 type Packet struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	SenderId uint64                 `protobuf:"varint,1,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
@@ -601,6 +645,7 @@ type Packet struct {
 	//	*Packet_Spore
 	//	*Packet_SporeConsumed
 	//	*Packet_SporesBatch
+	//	*Packet_PlayerConsumed
 	Msg           isPacket_Msg `protobuf_oneof:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -608,7 +653,7 @@ type Packet struct {
 
 func (x *Packet) Reset() {
 	*x = Packet{}
-	mi := &file_common_packets_proto_msgTypes[11]
+	mi := &file_common_packets_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -620,7 +665,7 @@ func (x *Packet) String() string {
 func (*Packet) ProtoMessage() {}
 
 func (x *Packet) ProtoReflect() protoreflect.Message {
-	mi := &file_common_packets_proto_msgTypes[11]
+	mi := &file_common_packets_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -633,7 +678,7 @@ func (x *Packet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Packet.ProtoReflect.Descriptor instead.
 func (*Packet) Descriptor() ([]byte, []int) {
-	return file_common_packets_proto_rawDescGZIP(), []int{11}
+	return file_common_packets_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Packet) GetSenderId() uint64 {
@@ -749,6 +794,15 @@ func (x *Packet) GetSporesBatch() *SporesBatchMessage {
 	return nil
 }
 
+func (x *Packet) GetPlayerConsumed() *PlayerConsumedMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_PlayerConsumed); ok {
+			return x.PlayerConsumed
+		}
+	}
+	return nil
+}
+
 type isPacket_Msg interface {
 	isPacket_Msg()
 }
@@ -797,6 +851,10 @@ type Packet_SporesBatch struct {
 	SporesBatch *SporesBatchMessage `protobuf:"bytes,12,opt,name=spores_batch,json=sporesBatch,proto3,oneof"`
 }
 
+type Packet_PlayerConsumed struct {
+	PlayerConsumed *PlayerConsumedMessage `protobuf:"bytes,13,opt,name=player_consumed,json=playerConsumed,proto3,oneof"`
+}
+
 func (*Packet_Chat) isPacket_Msg() {}
 
 func (*Packet_Id) isPacket_Msg() {}
@@ -818,6 +876,8 @@ func (*Packet_Spore) isPacket_Msg() {}
 func (*Packet_SporeConsumed) isPacket_Msg() {}
 
 func (*Packet_SporesBatch) isPacket_Msg() {}
+
+func (*Packet_PlayerConsumed) isPacket_Msg() {}
 
 var File_common_packets_proto protoreflect.FileDescriptor
 
@@ -855,7 +915,9 @@ const file_common_packets_proto_rawDesc = "" +
 	"\x12SporesBatchMessage\x12-\n" +
 	"\x06spores\x18\x01 \x03(\v2\x15.packets.SporeMessageR\x06spores\"&\n" +
 	"\x14SporeConsumedMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xcd\x05\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"4\n" +
+	"\x15PlayerConsumedMessage\x12\x1b\n" +
+	"\tplayer_id\x18\x01 \x01(\x04R\bplayerId\"\x98\x06\n" +
 	"\x06Packet\x12\x1b\n" +
 	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12*\n" +
 	"\x04chat\x18\x02 \x01(\v2\x14.packets.ChatMessageH\x00R\x04chat\x12#\n" +
@@ -870,7 +932,8 @@ const file_common_packets_proto_rawDesc = "" +
 	"\x05spore\x18\n" +
 	" \x01(\v2\x15.packets.SporeMessageH\x00R\x05spore\x12F\n" +
 	"\x0espore_consumed\x18\v \x01(\v2\x1d.packets.SporeConsumedMessageH\x00R\rsporeConsumed\x12@\n" +
-	"\fspores_batch\x18\f \x01(\v2\x1b.packets.SporesBatchMessageH\x00R\vsporesBatchB\x05\n" +
+	"\fspores_batch\x18\f \x01(\v2\x1b.packets.SporesBatchMessageH\x00R\vsporesBatch\x12I\n" +
+	"\x0fplayer_consumed\x18\r \x01(\v2\x1e.packets.PlayerConsumedMessageH\x00R\x0eplayerConsumedB\x05\n" +
 	"\x03msgB\rZ\vpkg/packetsb\x06proto3"
 
 var (
@@ -885,7 +948,7 @@ func file_common_packets_proto_rawDescGZIP() []byte {
 	return file_common_packets_proto_rawDescData
 }
 
-var file_common_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_common_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_common_packets_proto_goTypes = []any{
 	(*ChatMessage)(nil),            // 0: packets.ChatMessage
 	(*IdAssign)(nil),               // 1: packets.IdAssign
@@ -898,7 +961,8 @@ var file_common_packets_proto_goTypes = []any{
 	(*SporeMessage)(nil),           // 8: packets.SporeMessage
 	(*SporesBatchMessage)(nil),     // 9: packets.SporesBatchMessage
 	(*SporeConsumedMessage)(nil),   // 10: packets.SporeConsumedMessage
-	(*Packet)(nil),                 // 11: packets.Packet
+	(*PlayerConsumedMessage)(nil),  // 11: packets.PlayerConsumedMessage
+	(*Packet)(nil),                 // 12: packets.Packet
 }
 var file_common_packets_proto_depIdxs = []int32{
 	8,  // 0: packets.SporesBatchMessage.spores:type_name -> packets.SporeMessage
@@ -913,11 +977,12 @@ var file_common_packets_proto_depIdxs = []int32{
 	8,  // 9: packets.Packet.spore:type_name -> packets.SporeMessage
 	10, // 10: packets.Packet.spore_consumed:type_name -> packets.SporeConsumedMessage
 	9,  // 11: packets.Packet.spores_batch:type_name -> packets.SporesBatchMessage
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	11, // 12: packets.Packet.player_consumed:type_name -> packets.PlayerConsumedMessage
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_common_packets_proto_init() }
@@ -925,7 +990,7 @@ func file_common_packets_proto_init() {
 	if File_common_packets_proto != nil {
 		return
 	}
-	file_common_packets_proto_msgTypes[11].OneofWrappers = []any{
+	file_common_packets_proto_msgTypes[12].OneofWrappers = []any{
 		(*Packet_Chat)(nil),
 		(*Packet_Id)(nil),
 		(*Packet_LoginRequest)(nil),
@@ -937,6 +1002,7 @@ func file_common_packets_proto_init() {
 		(*Packet_Spore)(nil),
 		(*Packet_SporeConsumed)(nil),
 		(*Packet_SporesBatch)(nil),
+		(*Packet_PlayerConsumed)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -944,7 +1010,7 @@ func file_common_packets_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_packets_proto_rawDesc), len(file_common_packets_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

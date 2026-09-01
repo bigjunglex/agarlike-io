@@ -11,8 +11,8 @@ script = ExtResource("1_0uskn")
 
 [node name="Floor" type="Sprite2D" parent="World" unique_id=2052812082]
 texture_repeat = 2
-position = Vector2(308, 285)
-scale = Vector2(0.294, 0.289)
+position = Vector2(2004.9999, 2004.9999)
+scale = Vector2(0.40120006, 0.40239996)
 texture = ExtResource("2_wuwgw")
 region_enabled = true
 region_rect = Rect2(0, 0, 10000, 10000)

@@ -30,7 +30,8 @@ func _on_ws_packet_recived(packet: packets.Packet) -> void:
 		_handle_spore_packet(sender_id, packet.get_spore())
 	elif packet.has_spores_batch():
 		_handle_spore_batch_packet(sender_id, packet.get_spores_batch())
-	
+	elif packet.has_spore_consumed():
+		_handle_spore_conmsumed_packet(sender_id, packet.get_spore_consumed())
 	
 func _handle_chat_packet(sender_id: int, chat: packets.ChatMessage) -> void:
 	var username := _players[sender_id].actor_name
@@ -76,6 +77,18 @@ func _handle_spore_batch_packet(sender_id: int, batch: packets.SporesBatchMessag
 	for spore_msg in batch.get_spores():
 		_handle_spore_packet(sender_id, spore_msg)
 	
+
+func _handle_spore_conmsumed_packet(sender_id: int, packet: packets.SporeConsumedMessage) -> void: 
+	if sender_id in _players:
+		var actor := _players[sender_id]
+		var actor_mass := _rad_to_mass(actor.radius)
+		var spore_id := packet.get_id() 
+		if spore_id in _spores:
+			var spore := _spores[spore_id]
+			var spore_mass := _rad_to_mass(spore.radius)
+			var new_actor_mass := actor_mass + spore_mass
+			_set_actor_mass(actor, new_actor_mass)
+			_remove_spore(spore)
 
 func _on_line_edit_submit(new_text: String) -> void:
 	var packet := packets.Packet.new()
@@ -137,14 +150,44 @@ func _update_actor(
 func _on_player_area_entered(area: Area2D) -> void:
 	if area is Spore: 
 		_consume_spore(area as Spore)
+	elif area is Actor:
+		_collide_actor(area as Actor)
 		
+func _collide_actor(a: Actor) -> void: 
+	var player := _players[GameManager.client_id]
+	var p_mass := _rad_to_mass(player.radius)
+	var a_mass := _rad_to_mass(a.radius)
+	if p_mass > a_mass * 1.5:
+		_set_actor_mass(player, p_mass + a_mass)
+		var packet := packets.Packet.new()
+		var player_consume_msg := packet.new_player_consumed()
+		player_consume_msg.set_player_id(a.actor_id)
+		WS.send(packet)
+		_remove_actor(a)
+		
+
 func _consume_spore(spore: Spore) -> void:
+	var player  := _players[GameManager.client_id]
+	var p_mass  := _rad_to_mass(player.radius)
+	var s_mass  := _rad_to_mass(spore.radius) 
+	_set_actor_mass(player, p_mass + s_mass)
+	
 	var packet := packets.Packet.new()
 	var spore_consume_message := packet.new_spore_consumed()
 	spore_consume_message.set_id(spore.spore_id)
 	WS.send(packet)
 	_remove_spore(spore)
 	
-func _remove_spore(spore: Spore) -> void:
-	_spores.erase(spore.spore_id)
-	spore.queue_free()
+func _remove_spore(s: Spore) -> void:
+	_spores.erase(s.spore_id)
+	s.queue_free()
+
+func _remove_actor(a: Actor) -> void: 
+	_players.erase(a.actor_id)
+	a.queue_free()
+
+func _rad_to_mass(r: float) -> float:
+	return r * r * PI
+
+func _set_actor_mass(a: Actor, m: float) -> void:
+	a.radius = sqrt(m / PI)

@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/rand/v2"
 	"net/http"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -121,6 +122,8 @@ func (h *Hub) Run() {
 
 	log.Println("Client registrations ... ")
 
+	go h.replenishSporeLoop(2 * time.Second)
+
 	for {
 		select {
 		case client := <-h.RegisterChan:
@@ -162,6 +165,37 @@ func (h *Hub) Serve(
 
 func (h *Hub) newSpore() *objects.Spore {
 	sporeRadius := max(10+rand.NormFloat64()*3, 5)
-	x, y := objects.GetSpawnCoords()
+	x, y := objects.GetSpawnCoords(
+		sporeRadius,
+		h.SharedGameObjects.Players,
+		h.SharedGameObjects.Spores,
+	)
 	return &objects.Spore{X: x, Y: y, Radius: sporeRadius}
+}
+
+func (h *Hub) replenishSporeLoop(rate time.Duration) {
+	ticker := time.NewTicker(rate)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		sporesRemaining := h.SharedGameObjects.Spores.Len()
+		diff := MaxSpores - sporesRemaining
+
+		if diff <= 0 {
+			continue
+		}
+		log.Printf("%d spores remain, replenishing %d spores", sporesRemaining, diff)
+
+		for i := 0; i < min(diff, 0); i++ {
+			s := h.newSpore()
+			id := h.SharedGameObjects.Spores.Add(s)
+
+			h.BroadcastChan <- &packets.Packet{
+				SenderId: 0,
+				Msg:      packets.NewSpore(id, s),
+			}
+
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
 }
