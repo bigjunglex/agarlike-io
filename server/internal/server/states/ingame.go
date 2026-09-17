@@ -2,6 +2,7 @@ package states
 
 import (
 	"agar-server/internal/server"
+	"agar-server/internal/server/db"
 	"agar-server/internal/server/objects"
 	"agar-server/pkg/packets"
 	"context"
@@ -131,6 +132,7 @@ func (g *InGame) handlePlayerConsumed(senderId uint64, msg *packets.Packet_Playe
 	go g.client.SharedGameObjects().Players.Remove(consumedId)
 
 	g.client.Broadcast(msg)
+	go g.syncPlayerBestScore()
 }
 
 func (g *InGame) getPlayer(id uint64) (*objects.Player, error) {
@@ -211,6 +213,7 @@ func (g *InGame) handleSporeConsumed(senderId uint64, msg *packets.Packet_SporeC
 
 	go g.client.SharedGameObjects().Spores.Remove(sporeId)
 	g.client.Broadcast(msg)
+	go g.syncPlayerBestScore()
 }
 
 func (g *InGame) handleSpore(senderId uint64, msg *packets.Packet_Spore) {
@@ -243,6 +246,7 @@ func (g *InGame) OnExit() {
 		g.cancelPlayerUpdateLoop()
 	}
 	g.client.SharedGameObjects().Players.Remove(g.client.Id())
+	go g.syncPlayerBestScore()
 }
 
 func (g *InGame) getSpore(sporeId uint64) (*objects.Spore, error) {
@@ -269,6 +273,23 @@ func (g *InGame) validatePlayerProximityToTarget(tX, tY, tRadius, buffer float64
 	}
 
 	return nil
+}
+
+func (g *InGame) syncPlayerBestScore() {
+	currScore := int64(math.Round(radToMass(g.player.Radius)))
+	if currScore > g.player.BestScore {
+		g.player.BestScore = currScore
+		err := g.client.DbTx().Queries.UpdatePlayerBestScore(
+			g.client.DbTx().Ctx,
+			db.UpdatePlayerBestScoreParams{
+				ID:        g.player.DbId,
+				BestScore: g.player.BestScore,
+			},
+		)
+		if err != nil {
+			g.logger.Printf("Error updating player best score: %v", err)
+		}
+	}
 }
 
 func (g *InGame) nextRadius(dMass float64) float64 {

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cvxa36bcx5dbj" path="res://states/ingame/ingame.gd" id="1_0uskn"]
 [ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="2_q22go"]
 [ext_resource type="Texture2D" uid="uid://ue6ws3sla1nc" path="res://resources/floor_tile.png" id="2_wuwgw"]
+[ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="3_wuwgw"]
 
 [node name="Ingame" type="Node" unique_id=77203588]
 script = ExtResource("1_0uskn")
@@ -11,7 +12,7 @@ script = ExtResource("1_0uskn")
 
 [node name="Floor" type="Sprite2D" parent="World" unique_id=2052812082]
 texture_repeat = 2
-position = Vector2(2004.9999, 2004.9999)
+position = Vector2(2008.0001, 2005)
 scale = Vector2(0.40120006, 0.40239996)
 texture = ExtResource("2_wuwgw")
 region_enabled = true
@@ -19,15 +20,26 @@ region_rect = Rect2(0, 0, 10000, 10000)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1470888266]
 
-[node name="LineEdit" type="LineEdit" parent="UI" unique_id=457381366]
-offset_right = 1152.0
-offset_bottom = 38.0
+[node name="VBoxContainer" type="VBoxContainer" parent="UI" unique_id=795065301]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
 
-[node name="Log" type="RichTextLabel" parent="UI" unique_id=642863142]
+[node name="LineEdit" type="LineEdit" parent="UI/VBoxContainer" unique_id=457381366]
+layout_mode = 2
+
+[node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("3_wuwgw")]
+custom_minimum_size = Vector2(250, 150)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 10
+
+[node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=642863142]
 custom_minimum_size = Vector2(0, 300)
-offset_left = -2.0
-offset_top = 344.0
-offset_right = 1147.0
-offset_bottom = 644.0
+layout_mode = 2
+size_flags_vertical = 10
 script = ExtResource("2_q22go")
 metadata/_custom_type_script = "uid://j22s314pk4mi"

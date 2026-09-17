@@ -43,8 +43,10 @@ func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {
 		c.handleLoginRequest(senderId, msg)
 	case *packets.Packet_RegisterRequest:
 		c.handleRegisterRequest(senderId, msg)
-	// case *packets.Packet_Chat:
-	// 	c.handleChatMessage(senderId, msg)
+		// case *packets.Packet_Chat:
+		// 	c.handleChatMessage(senderId, msg)
+	case *packets.Packet_HiscoreBoardRequest:
+		c.hanldeHiscoreBoardRequest(senderId, msg)
 	}
 }
 
@@ -83,9 +85,18 @@ func (c *Connected) handleLoginRequest(senderId uint64, msg *packets.Packet_Logi
 	c.logger.Printf("[LOGIN]: %s logged in", username)
 	c.client.SocketSend(packets.NewOkResponse())
 
+	p, err := c.queries.GetPlayerByUserID(c.dbCtx, user.ID)
+	if err != nil {
+		c.logger.Printf("Error getting player for user %s: %v", username, err)
+		c.client.SocketSend(failMsg)
+		return
+	}
+
 	c.client.SetState(&InGame{
 		player: &objects.Player{
-			Name: username,
+			Name:      p.Name,
+			DbId:      p.ID,
+			BestScore: p.BestScore,
 		},
 	})
 }
@@ -120,7 +131,7 @@ func (c *Connected) handleRegisterRequest(senderId uint64, msg *packets.Packet_R
 		return
 	}
 
-	_, err = c.queries.CreateUser(c.dbCtx, db.CreateUserParams{
+	user, err := c.queries.CreateUser(c.dbCtx, db.CreateUserParams{
 		Username:     strings.ToLower(username),
 		PasswordHash: string(passHash),
 	})
@@ -131,8 +142,23 @@ func (c *Connected) handleRegisterRequest(senderId uint64, msg *packets.Packet_R
 		return
 	}
 
+	_, err = c.queries.CreatePlayer(c.dbCtx, db.CreatePlayerParams{
+		UserID: user.ID,
+		Name:   msg.RegisterRequest.Username,
+	})
+
+	if err != nil {
+		c.logger.Printf("Failed to create player for user %s: %v", username, err)
+		c.client.SocketSend(failMsg)
+		return
+	}
+
 	c.logger.Printf("User %s registered", username)
 	c.client.SocketSend(packets.NewOkResponse())
+}
+
+func (c *Connected) hanldeHiscoreBoardRequest(_ uint64, _ *packets.Packet_HiscoreBoardRequest) {
+	c.client.SetState(&BrowsingScores{})
 }
 
 func (c *Connected) OnExit() {}

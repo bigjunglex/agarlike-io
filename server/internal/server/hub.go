@@ -182,6 +182,7 @@ func (h *Hub) replenishSporeLoop(rate time.Duration) {
 		diff := MaxSpores - sporesRemaining
 
 		if diff <= 0 {
+			// log.Print("No spores to replenish")
 			continue
 		}
 		log.Printf("%d spores remain, replenishing %d spores", sporesRemaining, diff)
@@ -194,8 +195,7 @@ func (h *Hub) replenishSporeLoop(rate time.Duration) {
 				SenderId: 0,
 				Msg:      packets.NewSpore(id, s),
 			}
-
-			time.Sleep(50 * time.Millisecond)
 		}
+		time.Sleep(50 * time.Millisecond)
 	}
 }

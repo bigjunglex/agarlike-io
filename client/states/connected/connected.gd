@@ -8,13 +8,16 @@ var _action_on_ok_recieved: Callable
 @onready var _password_field: LineEdit = $UI/VBoxContainer/Password
 @onready var _login_button: Button = $UI/VBoxContainer/HBoxContainer/LoginButton
 @onready var _register_button: Button = $UI/VBoxContainer/HBoxContainer/RegisterButton
+@onready var _hiscores_button: Button = $UI/VBoxContainer/HBoxContainer/Hiscores
 @onready var _log: Log = $UI/VBoxContainer/Log
+@onready var _hiscores: Hiscores = $UI/VBoxContainer/Hiscores
 
 func _ready() -> void:
 	WS.packet_received.connect(_on_ws_packet_recieved)
 	WS.connection_closed.connect(_on_ws_connection_closed)
 	_login_button.pressed.connect(_on_login_pressed)
 	_register_button.pressed.connect(_on_register_pressed)
+	_hiscores_button.pressed.connect(_on_hiscores_pressed)
 	
 func _on_ws_packet_recieved(packet: packets.Packet) -> void:
 	var _sender_id := packet.get_sender_id()
@@ -39,6 +42,9 @@ func _on_login_pressed() -> void:
 	login_req.set_password(_password_field.text)
 	WS.send(packet)
 	_action_on_ok_recieved = func(): GameManager.set_state(GameManager.State.INGAME)
+
+func _on_hiscores_pressed() -> void:
+	GameManager.set_state(GameManager.State.BROWSE_SCORES)
 
 func _on_ws_connection_closed() -> void:
 	_log.warning("Disconnected from the server")

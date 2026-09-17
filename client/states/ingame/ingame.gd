@@ -7,8 +7,10 @@ const Spore := preload("res://objects/spore/spore.gd")
 var _players: Dictionary[int, Actor]
 var _spores: Dictionary[int, Spore]
 
-@onready var _log: Log = $UI/Log
-@onready var _line_edit: LineEdit = $UI/LineEdit
+@onready var _log: Log =$UI/VBoxContainer/Log
+@onready var _line_edit: LineEdit = $UI/VBoxContainer/LineEdit
+@onready var _hiscores: Hiscores = $UI/VBoxContainer/Hiscores
+
 @onready var _world: Node2D = $World
 
 func _ready() -> void:
@@ -124,6 +126,7 @@ func _add_actor(
 		is_player
 	)
 	_world.add_child(actor)
+	_hiscores.set_hiscore(actor_name, _rad_to_mass(radius))
 	_players[actor_id] = actor
 	if is_player:
 		actor.area_entered.connect(_on_player_area_entered)
@@ -140,6 +143,7 @@ func _update_actor(
 	) -> void:
 	var actor := _players[actor_id]
 	actor.radius = radius
+	_hiscores.set_hiscore(actor.actor_name, _rad_to_mass(radius))
 	if actor.position.distance_squared_to(Vector2(x, y)) > 100:
 		actor.position.x = x
 		actor.position.y = y
@@ -184,6 +188,7 @@ func _remove_spore(s: Spore) -> void:
 
 func _remove_actor(a: Actor) -> void: 
 	_players.erase(a.actor_id)
+	_hiscores.remove_hiscore(a.actor_name)
 	a.queue_free()
 
 func _rad_to_mass(r: float) -> float:
@@ -191,3 +196,4 @@ func _rad_to_mass(r: float) -> float:
 
 func _set_actor_mass(a: Actor, m: float) -> void:
 	a.radius = sqrt(m / PI)
+	_hiscores.set_hiscore(a.actor_name, roundi(m))

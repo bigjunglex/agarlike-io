@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b42r7vdq852ll" path="res://states/connected/connected.gd" id="1_idi6s"]
 [ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="2_kh2bm"]
+[ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="3_kh2bm"]
 
 [node name="Connected" type="Node" unique_id=167278110]
 script = ExtResource("1_idi6s")
@@ -37,8 +38,16 @@ text = "Login"
 layout_mode = 2
 text = "Register"
 
+[node name="Hiscores" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=1595644256]
+layout_mode = 2
+text = "Hiscores"
+
 [node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=1848809540]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 script = ExtResource("2_kh2bm")
 metadata/_custom_type_script = "uid://j22s314pk4mi"
+
+[node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("3_kh2bm")]
+layout_mode = 2
+size_flags_vertical = 3

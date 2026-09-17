@@ -4,12 +4,14 @@ enum State {
 	ENTERED,
 	CONNECTED,
 	INGAME,
+	BROWSE_SCORES,
 }
 
 var _states_scenes: Dictionary[State, String] = {
 	State.ENTERED: "res://states/entered/entered.tscn",
 	State.CONNECTED: "res://states/connected/connected.tscn",
-	State.INGAME: "res://states/ingame/ingame.tscn",	
+	State.INGAME: "res://states/ingame/ingame.tscn",
+	State.BROWSE_SCORES: "res://states/browse_scores/browse_scores.tscn",
 }
 
 var client_id: int
