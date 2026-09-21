@@ -69,9 +69,16 @@ func _handle_spore_packet(_sender_id: int, packet: packets.SporeMessage) -> void
 	var x = packet.get_x()
 	var y = packet.get_y()
 	var radius = packet.get_radius()
+	var is_dropped := false
+	
+	if GameManager.client_id in _players:
+		var p := _players[GameManager.client_id]
+		var p_pos := Vector2(p.position.x, p.position.y)
+		var s_pos := Vector2(x, y)
+		is_dropped = p_pos.distance_squared_to(s_pos) < p.radius ** 2
 	
 	if spore_id not in _spores:
-		var spore := Spore.instanciate(spore_id, x, y, radius)
+		var spore := Spore.instanciate(spore_id, x, y, radius, is_dropped)
 		_world.add_child(spore)
 		_spores[spore_id] = spore
 
@@ -171,6 +178,9 @@ func _collide_actor(a: Actor) -> void:
 		
 
 func _consume_spore(spore: Spore) -> void:
+	if spore.is_dropped:
+		return
+		
 	var player  := _players[GameManager.client_id]
 	var p_mass  := _rad_to_mass(player.radius)
 	var s_mass  := _rad_to_mass(spore.radius) 
