@@ -13,7 +13,6 @@ var (
 	port = flag.Int("port", 8075, "Port to listen on")
 )
 
-
 func main() {
 	flag.Parse()
 
@@ -39,4 +38,8 @@ func main() {
  2. Event system
  3. AOI
  ----- AFTER FINISH -----
+
+ ----MISC-----
+ -- sqlc generate -f .\server\internal\server\db\config\sqlc.yaml
+
 */

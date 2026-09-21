@@ -34,7 +34,25 @@ func (c *Connected) SetClient(client server.ClientInterfacer) {
 
 func (c *Connected) OnEnter() {
 	c.client.SocketSend(packets.NewId(c.client.Id()))
+	topScores, err := c.queries.GetTopScores(c.dbCtx, db.GetTopScoresParams{
+		Limit:  5,
+		Offset: 0,
+	})
+	if err != nil {
+		c.logger.Printf("failed to get top scores from db: %v", err)
+		return
+	}
 
+	hiscores := make([]*packets.HiscoreMessage, 0, 5)
+	for rank, scoreRow := range topScores {
+		hiscore_msg := &packets.HiscoreMessage{
+			Rank:  uint64(rank) + uint64(0) + 1,
+			Name:  scoreRow.Name,
+			Score: uint64(scoreRow.BestScore),
+		}
+		hiscores = append(hiscores, hiscore_msg)
+	}
+	c.client.SocketSend(packets.NewHiscoreBoard(hiscores))
 }
 
 func (c *Connected) HandleMessage(senderId uint64, msg packets.Msg) {

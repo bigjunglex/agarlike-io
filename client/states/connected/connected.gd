@@ -26,6 +26,8 @@ func _on_ws_packet_recieved(packet: packets.Packet) -> void:
 		_log.error(deny_response.get_reason())
 	elif packet.has_ok_response():
 		_action_on_ok_recieved.call()
+	elif packet.has_hiscore_board():
+		_handle_hiscore_board(packet.get_hiscore_board())
 
 func _on_register_pressed() -> void:
 	var packet := packets.Packet.new()
@@ -48,3 +50,10 @@ func _on_hiscores_pressed() -> void:
 
 func _on_ws_connection_closed() -> void:
 	_log.warning("Disconnected from the server")
+	
+
+func _handle_hiscore_board(msg: packets.HiscoreBoardMessage) -> void:
+	for m in msg.get_hiscores():
+		var name := "%d. %s" % [m.get_rank(), m.get_name()]
+		var score := m.get_score()
+		_hiscores.set_hiscore(name, score)

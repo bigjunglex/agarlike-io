@@ -33,3 +33,15 @@ FROM players
 ORDER BY best_score DESC
 LIMIT ?
 OFFSET ?;
+
+-- name: GetPlayerByName :one
+SELECT * FROM players
+WHERE name LIKE ?
+LIMIT 1;
+
+-- name: GetPlayerRank :one
+SELECT COUNT(*) + 1 AS "rank" from players
+WHERE best_score > (
+    SELECT best_score from players p2
+    WHERE p2.id = ?
+);

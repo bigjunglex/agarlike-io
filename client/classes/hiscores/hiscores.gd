@@ -7,7 +7,7 @@ var _scores: Array[int]
 @onready var _entry_template: HBoxContainer = $VBoxContainer/HBoxContainer
 
 @warning_ignore("shadowed_variable_base_class")
-func _add_hiscore(name: String, score: int) -> void:
+func _add_hiscore(name: String, score: int, highlight: bool) -> void:
 	_scores.append(score)
 	_scores.sort()
 	
@@ -21,12 +21,15 @@ func _add_hiscore(name: String, score: int) -> void:
 	name_label.text = name
 	score_label.text = str(score)
 	
+	if highlight:
+		name_label.add_theme_color_override("font_color", Color.YELLOW)
+	
 	entry.show()
 	
 @warning_ignore("shadowed_variable_base_class")
-func set_hiscore(name: String, score: int) -> void:
+func set_hiscore(name: String, score: int, highlight: bool = false) -> void:
 	remove_hiscore(name)
-	_add_hiscore(name, score)
+	_add_hiscore(name, score, highlight)
 	
 @warning_ignore("shadowed_variable_base_class")
 func remove_hiscore(name: String) -> void:
@@ -41,7 +44,11 @@ func remove_hiscore(name: String) -> void:
 			
 			
 			 
-	
+func clear_scores() -> void:
+	_scores.clear()
+	for e in _entry_container.get_children():
+		if e != _entry_template:
+			e.free()
 	
 	
 	

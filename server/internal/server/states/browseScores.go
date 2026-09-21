@@ -10,10 +10,10 @@ import (
 )
 
 type BrowsingScores struct {
-	client server.ClientInterfacer
-	logger *log.Logger
-	queris *db.Queries
-	dbCtx  context.Context
+	client  server.ClientInterfacer
+	logger  *log.Logger
+	queries *db.Queries
+	dbCtx   context.Context
 }
 
 func (b *BrowsingScores) Name() string {
@@ -24,15 +24,49 @@ func (b *BrowsingScores) SetClient(client server.ClientInterfacer) {
 	b.client = client
 	logPrefix := fmt.Sprintf("[CLIENT] [%s]id -(%d): ", b.Name(), client.Id())
 	b.logger = log.New(log.Writer(), logPrefix, log.LstdFlags)
-	b.queris = client.DbTx().Queries
+	b.queries = client.DbTx().Queries
 	b.dbCtx = client.DbTx().Ctx
 }
 
 func (b *BrowsingScores) OnEnter() {
-	const limit int64 = 10
-	const offset int64 = 0
+	b.sendTopScores(10, 0)
+}
 
-	topScores, err := b.queris.GetTopScores(b.dbCtx, db.GetTopScoresParams{
+func (b *BrowsingScores) HandleMessage(senderId uint64, msg packets.Msg) {
+	switch msg := msg.(type) {
+	case *packets.Packet_MenuRequest:
+		b.hanldeMenuRequest(senderId, msg)
+	case *packets.Packet_SearchHistory:
+		b.handleSearchScore(senderId, msg)
+	}
+}
+
+func (b *BrowsingScores) hanldeMenuRequest(_ uint64, _ *packets.Packet_MenuRequest) {
+	b.client.SetState(&Connected{})
+}
+
+func (b *BrowsingScores) handleSearchScore(_ uint64, msg *packets.Packet_SearchHistory) {
+	p, err := b.queries.GetPlayerByName(b.dbCtx, msg.SearchHistory.Name)
+	if err != nil {
+		b.logger.Printf("Error getting player %s: %v", p.Name, err)
+		b.client.SocketSend(packets.NewDenyResponse("No player found with that name"))
+		return
+	}
+
+	pRank, err := b.queries.GetPlayerRank(b.dbCtx, p.ID)
+	if err != nil {
+		b.logger.Printf("Error getting rank for player %s: %v", p.Name, err)
+		b.client.SocketSend(packets.NewDenyResponse("Player is unranked"))
+		return
+	}
+
+	const limit int64 = 10
+	offset := pRank - limit/2
+	b.sendTopScores(limit, max(0, offset))
+}
+
+func (b *BrowsingScores) sendTopScores(limit int64, offset int64) {
+	topScores, err := b.queries.GetTopScores(b.dbCtx, db.GetTopScoresParams{
 		Limit:  limit,
 		Offset: offset,
 	})
@@ -53,17 +87,6 @@ func (b *BrowsingScores) OnEnter() {
 	}
 
 	b.client.SocketSend(packets.NewHiscoreBoard(hiscores))
-}
-
-func (b *BrowsingScores) HandleMessage(senderId uint64, msg packets.Msg) {
-	switch msg := msg.(type) {
-	case *packets.Packet_MenuRequest:
-		b.hanldeMenuRequest(senderId, msg)
-	}
-}
-
-func (b *BrowsingScores) hanldeMenuRequest(_ uint64, _ *packets.Packet_MenuRequest) {
-	b.client.SetState(&Connected{})
 }
 
 func (b *BrowsingScores) OnExit() {

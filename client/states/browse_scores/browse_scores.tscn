@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bjpkynve45tpy" path="res://states/browse_scores/browse_scores.gd" id="1_hb22k"]
 [ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="2_50obk"]
+[ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="3_g8oo2"]
 
 [node name="BrowseScores" type="Node2D" unique_id=674134105]
 script = ExtResource("1_hb22k")
@@ -15,11 +16,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Back" type="Button" parent="UI/VBoxContainer" unique_id=2027572680]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer" unique_id=721061374]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Back" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=2027572680]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Back to menu"
 
+[node name="LineEdit" type="LineEdit" parent="UI/VBoxContainer/HBoxContainer" unique_id=871150263]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Search" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=260416002]
+layout_mode = 2
+text = "Search
+"
+
 [node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("2_50obk")]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=1202761565]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("3_g8oo2")
+metadata/_custom_type_script = "uid://j22s314pk4mi"
