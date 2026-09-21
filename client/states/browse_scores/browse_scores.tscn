@@ -8,4 +8,18 @@ script = ExtResource("1_hb22k")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2136223049]
 
-[node name="Hiscores" parent="UI" unique_id=229088540 instance=ExtResource("2_50obk")]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI" unique_id=105066729]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Back" type="Button" parent="UI/VBoxContainer" unique_id=2027572680]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Back to menu"
+
+[node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("2_50obk")]
+layout_mode = 2
+size_flags_vertical = 3

@@ -63,6 +63,7 @@ message HiscoreMessage {
 }
 
 message HiscoreBoardMessage { repeated HiscoreMessage hiscores = 1; }
+message BackToMenuMessage { }
 
 message Packet {
   uint64 sender_id = 1;
@@ -82,5 +83,6 @@ message Packet {
     HiscoreBoardRequestMessage hiscore_board_request = 14;
     HiscoreMessage hiscore = 15;
     HiscoreBoardMessage hiscore_board = 16;
+    BackToMenuMessage menu_request = 17;
   }
 }

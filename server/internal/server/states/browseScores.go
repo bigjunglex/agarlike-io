@@ -56,7 +56,14 @@ func (b *BrowsingScores) OnEnter() {
 }
 
 func (b *BrowsingScores) HandleMessage(senderId uint64, msg packets.Msg) {
+	switch msg := msg.(type) {
+	case *packets.Packet_MenuRequest:
+		b.hanldeMenuRequest(senderId, msg)
+	}
+}
 
+func (b *BrowsingScores) hanldeMenuRequest(_ uint64, _ *packets.Packet_MenuRequest) {
+	b.client.SetState(&Connected{})
 }
 
 func (b *BrowsingScores) OnExit() {
