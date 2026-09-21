@@ -209,6 +209,12 @@ func (g *InGame) handleSporeConsumed(senderId uint64, msg *packets.Packet_SporeC
 		return
 	}
 
+	err = g.validatePlayerDropCooldown(spore, 10)
+	if err != nil {
+		g.logger.Println(errMsg + err.Error())
+		return
+	}
+
 	sporeMass := radToMass(spore.Radius)
 	g.player.Radius = g.nextRadius(sporeMass)
 
@@ -240,9 +246,11 @@ func (g *InGame) syncPlayer(dt float64) {
 	prob := g.player.Radius / float64(server.MaxSpores*5)
 	if rand.Float64() < prob && g.player.Radius > 10 {
 		spore := &objects.Spore{
-			X:      g.player.X,
-			Y:      g.player.Y,
-			Radius: min(5+g.player.Radius/50, 15),
+			X:         g.player.X,
+			Y:         g.player.Y,
+			Radius:    min(5+g.player.Radius/50, 15),
+			DroppedBy: g.player,
+			DroppedAt: time.Now(),
 		}
 		sporeId := g.client.SharedGameObjects().Spores.Add(spore)
 		packet := packets.NewSpore(sporeId, spore)
@@ -287,6 +295,15 @@ func (g *InGame) validatePlayerProximityToTarget(tX, tY, tRadius, buffer float64
 		)
 	}
 
+	return nil
+}
+
+func (g *InGame) validatePlayerDropCooldown(s *objects.Spore, buffer float64) error {
+	minDis := s.Radius + g.player.Radius - buffer
+	minDt := time.Duration(minDis/g.player.Speed*1000) * time.Millisecond
+	if s.DroppedBy == g.player && time.Since(s.DroppedAt) < minDt {
+		return fmt.Errorf("Spore not consumed - dt: %v, minDt: %v", time.Since(s.DroppedAt), minDt)
+	}
 	return nil
 }
 
