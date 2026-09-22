@@ -2,52 +2,80 @@
 
 [ext_resource type="Script" uid="uid://b42r7vdq852ll" path="res://states/connected/connected.gd" id="1_idi6s"]
 [ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="2_kh2bm"]
+[ext_resource type="Shader" uid="uid://c73lr21fwnc1n" path="res://resources/background_effect.gdshader" id="2_tk3qr"]
+[ext_resource type="Texture2D" uid="uid://ue6ws3sla1nc" path="res://resources/floor_tile.png" id="2_x7iwh"]
 [ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="3_kh2bm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rp112"]
+shader = ExtResource("2_tk3qr")
+shader_parameter/amplitutde = Vector2(1, 0)
+shader_parameter/speed = Vector2(1, 0)
 
 [node name="Connected" type="Node" unique_id=167278110]
 script = ExtResource("1_idi6s")
 
+[node name="Background" type="Sprite2D" parent="." unique_id=1678316674]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_rp112")
+texture = ExtResource("2_x7iwh")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 1152, 650)
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=1326835452]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI" unique_id=381893100]
-custom_minimum_size = Vector2(350, 0)
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
+[node name="MarginContainer" type="MarginContainer" parent="UI" unique_id=475049753]
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -175.0
-offset_top = 37.0
-offset_right = 175.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="Username" type="LineEdit" parent="UI/VBoxContainer" unique_id=283007903]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer" unique_id=381893100]
+custom_minimum_size = Vector2(451, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 
-[node name="Password" type="LineEdit" parent="UI/VBoxContainer" unique_id=987337070]
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=373246924]
 layout_mode = 2
+bbcode_enabled = true
+text = "[center][rainbow][shake][b]Circle Circus[/b][/shake][/rainbow][/center]"
+fit_content = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer" unique_id=1499565970]
+[node name="Username" type="LineEdit" parent="UI/MarginContainer/VBoxContainer" unique_id=283007903]
 layout_mode = 2
+placeholder_text = "Username"
 
-[node name="LoginButton" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=221105539]
+[node name="Password" type="LineEdit" parent="UI/MarginContainer/VBoxContainer" unique_id=987337070]
+layout_mode = 2
+placeholder_text = "Password"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer/VBoxContainer" unique_id=1499565970]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LoginButton" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=221105539]
 layout_mode = 2
 text = "Login"
 
-[node name="RegisterButton" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=192254547]
+[node name="RegisterButton" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=192254547]
 layout_mode = 2
 text = "Register"
 
-[node name="Hiscores" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=1595644256]
+[node name="Hiscores" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1595644256]
 layout_mode = 2
 text = "Hiscores"
 
-[node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=1848809540]
+[node name="Log" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=1848809540]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 script = ExtResource("2_kh2bm")
 metadata/_custom_type_script = "uid://j22s314pk4mi"
 
-[node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("3_kh2bm")]
+[node name="Hiscores" parent="UI/MarginContainer/VBoxContainer" unique_id=229088540 instance=ExtResource("3_kh2bm")]
 layout_mode = 2
 size_flags_vertical = 3

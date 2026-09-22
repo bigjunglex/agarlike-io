@@ -16,7 +16,10 @@ const CLIENT_CREDS: Record<string, string> = {
     "BotBridge"     : "123456eqw",
     "BotBrother"    : "123456eqq",
     "BotBread"      : "123456eqq",
-} 
+}
+/**
+ * bot runner should be on same machine for now
+ */
 const SERVER_URL = "http://localhost:8075/ws"
 
 

@@ -2,43 +2,71 @@
 
 [ext_resource type="Script" uid="uid://bjpkynve45tpy" path="res://states/browse_scores/browse_scores.gd" id="1_hb22k"]
 [ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="2_50obk"]
+[ext_resource type="Shader" uid="uid://c73lr21fwnc1n" path="res://resources/background_effect.gdshader" id="2_f6lnq"]
 [ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="3_g8oo2"]
+[ext_resource type="Texture2D" uid="uid://ue6ws3sla1nc" path="res://resources/floor_tile.png" id="3_om8q1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u53ty"]
+shader = ExtResource("2_f6lnq")
+shader_parameter/amplitutde = Vector2(1, 0)
+shader_parameter/speed = Vector2(1, 0)
 
 [node name="BrowseScores" type="Node2D" unique_id=674134105]
 script = ExtResource("1_hb22k")
 
+[node name="Background" type="Sprite2D" parent="." unique_id=1411136530]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_u53ty")
+texture = ExtResource("3_om8q1")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 1152, 650)
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=2136223049]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI" unique_id=105066729]
+[node name="MarginContainer" type="MarginContainer" parent="UI" unique_id=802811417]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer" unique_id=721061374]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer" unique_id=105066729]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=988570901]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center][rainbow][shake][b]Circle Circus[/b][/shake][/rainbow][/center]"
+fit_content = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer/VBoxContainer" unique_id=721061374]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="Back" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=2027572680]
+[node name="Back" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2027572680]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Back to menu"
 
-[node name="LineEdit" type="LineEdit" parent="UI/VBoxContainer/HBoxContainer" unique_id=871150263]
+[node name="LineEdit" type="LineEdit" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=871150263]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Search" type="Button" parent="UI/VBoxContainer/HBoxContainer" unique_id=260416002]
+[node name="Search" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=260416002]
 layout_mode = 2
 text = "Search
 "
 
-[node name="Hiscores" parent="UI/VBoxContainer" unique_id=229088540 instance=ExtResource("2_50obk")]
+[node name="Hiscores" parent="UI/MarginContainer/VBoxContainer" unique_id=229088540 instance=ExtResource("2_50obk")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Log" type="RichTextLabel" parent="UI/VBoxContainer" unique_id=1202761565]
+[node name="Log" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=1202761565]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 script = ExtResource("3_g8oo2")

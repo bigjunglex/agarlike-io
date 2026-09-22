@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 WS="*uid://b0dn185p61p1c"
 GameManager="*uid://khq2owpxglmx"
 
+[display]
+
+window/size/viewport_height=650
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godobuf/plugin.cfg")

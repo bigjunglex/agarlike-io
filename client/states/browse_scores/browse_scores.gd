@@ -1,11 +1,11 @@
 extends Node2D
 
 const packets := preload("res://packets.gd")
-@onready var _hiscores: Hiscores = $UI/VBoxContainer/Hiscores
-@onready var _back: Button = $UI/VBoxContainer/HBoxContainer/Back
-@onready var _search_btn: Button = $UI/VBoxContainer/HBoxContainer/Search
-@onready var _line_edit: LineEdit = $UI/VBoxContainer/HBoxContainer/LineEdit
-@onready var _log: Log = $UI/VBoxContainer/Log
+@onready var _hiscores: Hiscores = $UI/MarginContainer/VBoxContainer/Hiscores
+@onready var _back: Button = $UI/MarginContainer/VBoxContainer/HBoxContainer/Back
+@onready var _search_btn: Button = $UI/MarginContainer/VBoxContainer/HBoxContainer/Search
+@onready var _line_edit: LineEdit = $UI/MarginContainer/VBoxContainer/HBoxContainer/LineEdit
+@onready var _log: Log = $UI/MarginContainer/VBoxContainer/Log
 
 
 func _ready() -> void:

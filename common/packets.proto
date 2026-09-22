@@ -67,6 +67,8 @@ message BackToMenuMessage { }
 
 message SearchHistoryMessage { string name = 1; }
 
+message DisconnectMessage { string reason = 1; }
+
 message Packet {
   uint64 sender_id = 1;
   oneof msg {
@@ -87,5 +89,6 @@ message Packet {
     HiscoreBoardMessage hiscore_board = 16;
     BackToMenuMessage menu_request = 17;
     SearchHistoryMessage search_history = 18;
+    DisconnectMessage disconnect = 19;
   }
 }

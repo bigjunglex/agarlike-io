@@ -7,9 +7,11 @@ const Spore := preload("res://objects/spore/spore.gd")
 var _players: Dictionary[int, Actor]
 var _spores: Dictionary[int, Spore]
 
-@onready var _log: Log =$UI/VBoxContainer/Log
-@onready var _line_edit: LineEdit = $UI/VBoxContainer/LineEdit
-@onready var _hiscores: Hiscores = $UI/VBoxContainer/Hiscores
+@onready var _log: Log =$UI/MarginContainer/VBoxContainer/Log
+@onready var _line_edit: LineEdit = $UI/MarginContainer/VBoxContainer/HBoxContainer/LineEdit
+@onready var _hiscores: Hiscores = $UI/MarginContainer/VBoxContainer/Hiscores
+@onready var _logout_btn: Button = $UI/MarginContainer/VBoxContainer/HBoxContainer/LogoutBtn
+@onready var _send_btn: Button = $UI/MarginContainer/VBoxContainer/HBoxContainer/SendBtn
 
 @onready var _world: Node2D = $World
 
@@ -18,6 +20,8 @@ func _ready() -> void:
 	WS.packet_received.connect(_on_ws_packet_recived)
 	
 	_line_edit.text_submitted.connect(_on_line_edit_submit)
+	_send_btn.button_down.connect(_on_send)
+	_logout_btn.button_down.connect(_on_logout)
 
 func _on_ws_connection_closed() -> void:
 	_log.warning("Disconnected from the server")
@@ -34,6 +38,8 @@ func _on_ws_packet_recived(packet: packets.Packet) -> void:
 		_handle_spore_batch_packet(sender_id, packet.get_spores_batch())
 	elif packet.has_spore_consumed():
 		_handle_spore_conmsumed_packet(sender_id, packet.get_spore_consumed())
+	elif packet.has_disconnect():
+		_handle_disconnect_packet(sender_id, packet.get_disconnect())
 	
 func _handle_chat_packet(sender_id: int, chat: packets.ChatMessage) -> void:
 	var username := _players[sender_id].actor_name
@@ -87,6 +93,13 @@ func _handle_spore_batch_packet(sender_id: int, batch: packets.SporesBatchMessag
 		_handle_spore_packet(sender_id, spore_msg)
 	
 
+func _handle_disconnect_packet(id: int, packet: packets.DisconnectMessage) -> void:
+	if id in _players:
+		var p := _players[id]
+		_log.info("%s disconnected, reason : %s" % [p.name, packet.get_reason()])
+		_remove_actor(p)
+	
+
 func _handle_spore_conmsumed_packet(sender_id: int, packet: packets.SporeConsumedMessage) -> void: 
 	if sender_id in _players:
 		var actor := _players[sender_id]
@@ -111,6 +124,15 @@ func _on_line_edit_submit(new_text: String) -> void:
 		_log.chat("You", new_text)
 	_line_edit.clear()
 
+func _on_send() -> void:
+	_on_line_edit_submit(_line_edit.text)
+
+func _on_logout() -> void:
+	var packet := packets.Packet.new()
+	var msg := packet.new_disconnect()
+	msg.set_reason("logged out")
+	WS.send(packet)
+	GameManager.set_state(GameManager.State.CONNECTED)
 
 func _add_actor(
 		actor_id: int,
