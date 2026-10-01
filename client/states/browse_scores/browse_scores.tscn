@@ -69,5 +69,6 @@ size_flags_vertical = 3
 [node name="Log" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=1202761565]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+scroll_following = true
 script = ExtResource("3_g8oo2")
 metadata/_custom_type_script = "uid://j22s314pk4mi"

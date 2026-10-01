@@ -60,5 +60,6 @@ size_flags_vertical = 10
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 10
+scroll_following = true
 script = ExtResource("2_q22go")
 metadata/_custom_type_script = "uid://j22s314pk4mi"

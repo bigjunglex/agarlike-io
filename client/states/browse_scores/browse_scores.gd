@@ -13,6 +13,7 @@ func _ready() -> void:
 	_back.button_down.connect(_on_back_pressed)
 	_line_edit.text_submitted.connect(_on_line_edit_submit)
 	_search_btn.button_down.connect(_on_search_pressed)
+	_line_edit.grab_focus.call_deferred()
 	
 	var packet := packets.Packet.new()
 	packet.new_hiscore_board_request()

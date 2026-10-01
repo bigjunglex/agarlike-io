@@ -18,6 +18,7 @@ func _ready() -> void:
 	_login_button.pressed.connect(_on_login_pressed)
 	_register_button.pressed.connect(_on_register_pressed)
 	_hiscores_button.pressed.connect(_on_hiscores_pressed)
+	_username_field.grab_focus.call_deferred()
 	
 func _on_ws_packet_recieved(packet: packets.Packet) -> void:
 	var _sender_id := packet.get_sender_id()

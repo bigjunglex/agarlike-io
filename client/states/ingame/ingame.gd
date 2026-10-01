@@ -22,7 +22,8 @@ func _ready() -> void:
 	_line_edit.text_submitted.connect(_on_line_edit_submit)
 	_send_btn.button_down.connect(_on_send)
 	_logout_btn.button_down.connect(_on_logout)
-
+	_line_edit.grab_focus.call_deferred()
+	
 func _on_ws_connection_closed() -> void:
 	_log.warning("Disconnected from the server")
 

@@ -53,6 +53,8 @@ placeholder_text = "Username"
 [node name="Password" type="LineEdit" parent="UI/MarginContainer/VBoxContainer" unique_id=987337070]
 layout_mode = 2
 placeholder_text = "Password"
+virtual_keyboard_type = 6
+secret = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer/VBoxContainer" unique_id=1499565970]
 layout_mode = 2
@@ -73,6 +75,7 @@ text = "Hiscores"
 [node name="Log" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=1848809540]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
+scroll_following = true
 script = ExtResource("2_kh2bm")
 metadata/_custom_type_script = "uid://j22s314pk4mi"
 
