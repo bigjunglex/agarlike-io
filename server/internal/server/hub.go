@@ -180,14 +180,16 @@ func (h *Hub) replenishSporeLoop(rate time.Duration) {
 	for range ticker.C {
 		sporesRemaining := h.SharedGameObjects.Spores.Len()
 		diff := MaxSpores - sporesRemaining
+		batch := 20
 
 		if diff <= 0 {
 			// log.Print("No spores to replenish")
 			continue
 		}
-		log.Printf("%d spores remain, replenishing %d spores", sporesRemaining, diff)
+		currBatch := min(diff, batch)
+		log.Printf("%d spores remain, replenishing %d spores", sporesRemaining, currBatch)
 
-		for i := 0; i < min(diff, 0); i++ {
+		for i := 0; i < currBatch; i++ {
 			s := h.newSpore()
 			id := h.SharedGameObjects.Spores.Add(s)
 
