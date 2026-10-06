@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bt2fnmor3rgtg"]
+
+[ext_resource type="Script" uid="uid://d3jdnh6avyhnd" path="res://classes/login_form/login_form.gd" id="2_13f3m"]
+[ext_resource type="Theme" uid="uid://bescrmgmffkug" path="res://resources/game_theme.tres" id="2_q6dyo"]
+
+[node name="LoginForm" type="VBoxContainer" unique_id=1359757958]
+custom_minimum_size = Vector2(451, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_q6dyo")
+script = ExtResource("2_13f3m")
+
+[node name="Username" type="LineEdit" parent="." unique_id=440430396]
+layout_mode = 2
+placeholder_text = "Username"
+
+[node name="Password" type="LineEdit" parent="." unique_id=58054813]
+layout_mode = 2
+placeholder_text = "Password"
+virtual_keyboard_type = 6
+secret = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1374537745]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LoginButton" type="Button" parent="HBoxContainer" unique_id=521546319]
+layout_mode = 2
+text = "Login"
+
+[node name="Hiscores" type="Button" parent="HBoxContainer" unique_id=1286220500]
+layout_mode = 2
+text = "Hiscores"

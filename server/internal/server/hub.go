@@ -198,6 +198,6 @@ func (h *Hub) replenishSporeLoop(rate time.Duration) {
 				Msg:      packets.NewSpore(id, s),
 			}
 		}
-		time.Sleep(50 * time.Millisecond)
+		// time.Sleep(50 * time.Millisecond)
 	}
 }

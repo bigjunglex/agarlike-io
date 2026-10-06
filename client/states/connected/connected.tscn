@@ -5,6 +5,9 @@
 [ext_resource type="Shader" uid="uid://c73lr21fwnc1n" path="res://resources/background_effect.gdshader" id="2_tk3qr"]
 [ext_resource type="Texture2D" uid="uid://ue6ws3sla1nc" path="res://resources/floor_tile.png" id="2_x7iwh"]
 [ext_resource type="PackedScene" uid="uid://ctwq660v0npav" path="res://classes/hiscores/hiscores.tscn" id="3_kh2bm"]
+[ext_resource type="Theme" uid="uid://bescrmgmffkug" path="res://resources/game_theme.tres" id="4_rp112"]
+[ext_resource type="PackedScene" uid="uid://bt2fnmor3rgtg" path="res://classes/login_form/login_form.tscn" id="5_o1o5k"]
+[ext_resource type="PackedScene" uid="uid://chbcdqs1r153b" path="res://classes/register_form/register_form.tscn" id="6_ne18u"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rp112"]
 shader = ExtResource("2_tk3qr")
@@ -31,14 +34,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer" unique_id=381893100]
-custom_minimum_size = Vector2(451, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 0
+theme = ExtResource("4_rp112")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=373246924]
 layout_mode = 2
@@ -46,34 +50,22 @@ bbcode_enabled = true
 text = "[center][rainbow][shake][b]Circle Circus[/b][/shake][/rainbow][/center]"
 fit_content = true
 
-[node name="Username" type="LineEdit" parent="UI/MarginContainer/VBoxContainer" unique_id=283007903]
+[node name="LoginForm" parent="UI/MarginContainer/VBoxContainer" unique_id=1359757958 instance=ExtResource("5_o1o5k")]
 layout_mode = 2
-placeholder_text = "Username"
 
-[node name="Password" type="LineEdit" parent="UI/MarginContainer/VBoxContainer" unique_id=987337070]
+[node name="RegisterForm" parent="UI/MarginContainer/VBoxContainer" unique_id=391737223 instance=ExtResource("6_ne18u")]
+visible = false
 layout_mode = 2
-placeholder_text = "Password"
-virtual_keyboard_type = 6
-secret = true
+size_flags_vertical = 6
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer/VBoxContainer" unique_id=1499565970]
+[node name="RegisterPrompt" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=913778004]
 layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="LoginButton" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=221105539]
-layout_mode = 2
-text = "Login"
-
-[node name="RegisterButton" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=192254547]
-layout_mode = 2
-text = "Register"
-
-[node name="Hiscores" type="Button" parent="UI/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1595644256]
-layout_mode = 2
-text = "Hiscores"
+bbcode_enabled = true
+text = "[center][i]Don't have an account? [color=#E3A071][url=register]Create one here![/url][/color][/i][/center]"
+fit_content = true
 
 [node name="Log" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=1848809540]
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 scroll_following = true
 script = ExtResource("2_kh2bm")

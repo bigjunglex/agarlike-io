@@ -5,6 +5,7 @@
 [ext_resource type="Shader" uid="uid://c73lr21fwnc1n" path="res://resources/background_effect.gdshader" id="2_f6lnq"]
 [ext_resource type="Script" uid="uid://j22s314pk4mi" path="res://classes/log/log.gd" id="3_g8oo2"]
 [ext_resource type="Texture2D" uid="uid://ue6ws3sla1nc" path="res://resources/floor_tile.png" id="3_om8q1"]
+[ext_resource type="Theme" uid="uid://bescrmgmffkug" path="res://resources/game_theme.tres" id="4_om8q1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u53ty"]
 shader = ExtResource("2_f6lnq")
@@ -37,6 +38,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer" unique_id=105066729]
 layout_mode = 2
+theme = ExtResource("4_om8q1")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="UI/MarginContainer/VBoxContainer" unique_id=988570901]
 layout_mode = 2

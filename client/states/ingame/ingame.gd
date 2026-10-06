@@ -56,6 +56,7 @@ func _handle_player_packet(_sender_id: int, player: packets.PlayerMessage) -> vo
 	var speed := player.get_speed()
 	var direction := player.get_direction()
 	var is_player := actor_id == GameManager.client_id
+	var color := Color.hex(player.get_color())
 	
 	if actor_id not in _players:
 		_add_actor(
@@ -66,7 +67,8 @@ func _handle_player_packet(_sender_id: int, player: packets.PlayerMessage) -> vo
 			radius,
 			direction,
 			speed,
-			is_player
+			is_player,
+			color
 		)
 	else:
 		_update_actor(actor_id, x, y, radius, direction, speed, is_player)
@@ -143,7 +145,8 @@ func _add_actor(
 		radius: float,
 		direction: float,
 		speed: float,
-		is_player: bool
+		is_player: bool,
+		color: Color
 	) -> void:
 	var actor := Actor.instanciate(
 		actor_id,
@@ -153,9 +156,11 @@ func _add_actor(
 		radius,
 		direction,
 		speed,
-		is_player
+		is_player,
+		color
 	)
 	_world.add_child(actor)
+	actor.z_index = 1
 	_hiscores.set_hiscore(actor_name, _rad_to_mass(radius))
 	_players[actor_id] = actor
 	if is_player:

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ctwq660v0npav"]
 
 [ext_resource type="Script" uid="uid://bildtt6kujbim" path="res://classes/hiscores/hiscores.gd" id="1_810hp"]
+[ext_resource type="Theme" uid="uid://bescrmgmffkug" path="res://resources/game_theme.tres" id="2_jtdi3"]
 
 [node name="Hiscores" type="ScrollContainer" unique_id=229088540]
 anchors_preset = 15
@@ -15,6 +16,7 @@ script = ExtResource("1_810hp")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("2_jtdi3")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1892398398]
 visible = false

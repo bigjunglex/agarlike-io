@@ -8,6 +8,7 @@ type Player struct {
 	ID        int64
 	UserID    int64
 	Name      string
+	Color     int64
 	BestScore int64
 }
 
