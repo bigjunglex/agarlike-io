@@ -183,6 +183,10 @@ func _update_actor(
 		actor.position.x = x
 		actor.position.y = y
 	
+	var server_position := Vector2(x, y)
+	if actor.position.distance_squared_to(server_position) > 50:
+		actor.server_position = server_position
+	
 	if not is_player:
 		actor.velocity = speed * Vector2.from_angle(direction)
 

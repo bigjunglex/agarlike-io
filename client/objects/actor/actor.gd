@@ -7,6 +7,7 @@ const Actor := preload("res://objects/actor/actor.gd")
 var _target_zoom := 2.0
 var _max_zoom := _target_zoom
 
+
 @onready var _collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var _nameplate: Label = $Label
 @onready var _camera: Camera2D = $Camera2D
@@ -27,6 +28,9 @@ var radius: float:
 		_collision_shape.shape.radius = radius
 		_update_zoom()
 		queue_redraw()
+
+
+var server_position: Vector2
 
 static func instanciate(
 		actor_id: int,
@@ -57,6 +61,7 @@ func _ready() -> void:
 	position.y = start_y
 	velocity = Vector2.RIGHT * speed
 	radius = start_radius
+	server_position = position
 	
 	_nameplate.text = actor_name
 	_collision_shape.shape.radius = radius
@@ -67,6 +72,8 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	position += velocity * delta
+	server_position += velocity * delta
+	position += (server_position - position) * 0.05
 	if not is_player:
 		return
 	var mouse_pos := get_global_mouse_position()
